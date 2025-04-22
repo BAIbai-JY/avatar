@@ -4,203 +4,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>图片合成</title>
+    <title>图片合成 | Node-x</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #111;
-            color: white;
-            text-align: center;
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #3b82f6;
+            --dark-bg: #1a1a1a;
+            --light-text: #f8fafc;
+            --card-bg: #262626;
+            --border-color: #404040;
         }
 
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--dark-bg);
+            color: var(--light-text);
+            line-height: 1.6;
+        }
+
+        .main-container {
+            max-width: 600px;
+            margin: 0 auto;
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        /* 改进导航样式 */
         #tab-s {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            padding: 10px;
-            background: #222;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
+            gap: 15px;
+            padding: 12px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 20px;
         }
 
         #tab-s div {
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: 0.3s;
+            padding: 10px 24px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #a3a3a3;
+            cursor: pointer;
         }
 
         #tab-s div:hover {
-            background: #444;
+            background: #3f3f46;
+            color: var(--light-text);
         }
 
+        #tab-s div.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* 容器样式改进 */
         .container {
-            max-width: 400px;
-            margin: 0 auto;
-            background: #222;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
         }
 
+        h2 {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.75rem;
+            color: var(--light-text);
+            text-align: center;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        /* 输入组改进 */
         .input-group {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin: 10px 0;
+            margin: 1rem 0;
+            gap: 12px;
         }
 
         label {
-            font-size: 14px;
+            flex: 0 0 120px;
+            font-size: 0.95rem;
+            color: #d4d4d4;
         }
 
         select, input[type="range"], input[type="color"] {
             flex: 1;
-            padding: 5px;
-            margin-left: 10px;
-            background: #333;
+            padding: 10px;
+            background: #404040;
+            border: 1px solid #525252;
+            border-radius: 8px;
             color: white;
-            border: none;
-            border-radius: 5px;
+            transition: all 0.2s;
         }
 
+        input[type="range"] {
+            padding: 0;
+            height: 6px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* 按钮样式改进 */
         button {
             width: 100%;
-            padding: 12px;
-            margin-top: 15px;
-            background: #28a745;
+            padding: 14px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            font-size: 16px;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         button:hover {
-            background: #218838;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
+        /* 画布容器改进 */
         #canvas-container {
-            margin-top: 15px;
-            border: 1px solid #444;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin-top: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
             overflow: hidden;
             background: black;
-            border-radius: 10px;
+            aspect-ratio: 1/1;
         }
 
         canvas {
             width: 100%;
-            height: auto;
+            height: 100%;
+            object-fit: contain;
         }
-        a {
-            color: #fff;
-        }
+
+        /* 背景选项改进 */
         .bg-options {
             display: flex;
-            gap: 10px;
-            margin-left: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
+
         .bg-option {
-            width: 30px;
-            height: 30px;
-            border-radius: 5px;
-            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
             border: 2px solid transparent;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            object-fit: cover;
         }
+
         .bg-option:hover {
             transform: scale(1.1);
+            border-color: var(--primary-color);
         }
+
         .bg-option.active {
-            border-color: #fff;
+            border-color: white;
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+        }
+
+        /* 关于区域改进 */
+        .about-s p {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .tg-s img {
+            width: 40px;
+            height: 40px;
+            vertical-align: middle;
+            margin-right: 10px;
+            transition: transform 0.2s;
+        }
+
+        .tg-s:hover img {
+            transform: scale(1.1);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            .input-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            label {
+                flex: none;
+                width: 100%;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container avater-s">
-        <h2>
-            头像制作区~
-        </h2>
-        
-        <input type="file" id="upload" multiple accept="image/*">
-        
-        <div class="input-group">
-            <span id="size-value">150</span>
-            <input type="range" id="image-size" min="50" max="600" value="150">
-        </div>
-        
-        <div class="input-group">
-            <label for="use-bg">点击右侧选择框勾选添加，背景:</label>
-            <input type="checkbox" style="width: 30px;height: 50px;" id="use-bg">
-        </div>
-        
-        <div class="input-group">
-            <label for="resolution">分辨率:</label>
-            <select id="resolution">
-                <option value="1">1x</option>
-                <option value="2">2x</option>
-                <option value="3" selected>3x</option>
-            </select>
-        </div>
+    <div id="tab-s">
+        <div data-page="avatar" class="active">头像制作</div>
+        <div data-page="about">关于我们</div>
+        <div data-page="telegram">联系我们</div>
+    </div>
 
-        <div class="input-group">
-            <label for="bg-color">颜色:</label>
-            <input type="color" id="bg-color" value="#FF0000">
-        </div>
+    <div class="main-container">
+        <div class="container avater-s">
+            <h2>头像定制工坊</h2>
+            
+            <input type="file" id="upload" multiple accept="image/*" class="custom-file-input">
+            
+            <div class="input-group">
+                <label for="image-size">尺寸调整</label>
+                <input type="range" id="image-size" min="50" max="600" value="150">
+                <span id="size-value" class="value-display">150px</span>
+            </div>
+            
+            <div class="input-group">
+                <label for="use-bg">启用背景</label>
+                <input type="checkbox" id="use-bg" class="toggle-switch">
+            </div>
 
-        <div class="input-group">
-            <label>背景图片:</label>
-            <div class="bg-options">
-                <img src="./img/red.png" class="bg-option" data-bg="red">
-                <img src="./img/yellow.png" class="bg-option" data-bg="yellow">
-                <img src="./img/green.png" class="bg-option" data-bg="green">
-                <img src="./img/blue.png" class="bg-option" data-bg="blue">
-                <img src="./img/brown.png" class="bg-option" data-bg="brown">
+            <div class="input-group">
+                <label for="resolution">输出分辨率</label>
+                <select id="resolution">
+                    <option value="1">标准 (1x)</option>
+                    <option value="2">高清 (2x)</option>
+                    <option value="3" selected>超清 (3x)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="bg-color">背景颜色</label>
+                <input type="color" id="bg-color" value="#FF0000">
+            </div>
+
+            <div class="input-group">
+                <label>预设背景</label>
+                <div class="bg-options">
+                    <img src="./img/red.png" class="bg-option" data-bg="red">
+                    <img src="./img/yellow.png" class="bg-option" data-bg="yellow">
+                    <img src="./img/green.png" class="bg-option" data-bg="green">
+                    <img src="./img/blue.png" class="bg-option" data-bg="blue">
+                    <img src="./img/brown.png" class="bg-option" data-bg="brown">
+                </div>
+            </div>
+
+            <button id="download" class="download-btn">
+                <span class="btn-text">下载作品</span>
+                <span class="download-icon">↓</span>
+            </button>
+            
+            <div id="canvas-container">
+                <canvas id="canvas"></canvas>
             </div>
         </div>
-
-        <button id="download">下载图片</button>
         
-        <div id="canvas-container">
-            <canvas id="canvas"></canvas>
+        <div class="container about-s" style="display: none;">
+            <h2>关于 Node-x</h2>
+            <p><a href="https://node-x.xyz" target="_blank">访问官网了解更多 →</a></p>
+        </div>
+
+        <div class="container tg-s" style="display: none;">
+            <h2>加入社区</h2>
+            <p>
+                <a href="https://t.me/nodex527/1" target="_blank">
+                    <img src="./img/tg.png" alt="Telegram">
+                    点击加入Telegram频道
+                </a>
+            </p>
         </div>
     </div>
-    
-    <div class="container about-s">
-        <h2>关于 Node-x</h2>
-        <p><a href="https://node-x.xyz">点击跳转官网</a></p>
-    </div>
-    <div class="container tg-s">
-        <p>
-            <a href="https://t.me/nodex527/1" target="_blank"><img src="./img/tg.png" alt="">点击跳转</a>
-        </p>
-    </div>
+
     <script src="./js/avatar-js/index.js"></script>
     <script>
-        const tgDom = document.querySelector('.tg-s')
-        const aboutDom = document.querySelector('.about-s')
-        const avatarDom = document.querySelector('.avater-s')
-        const init = () => {
-            tgDom.style.display = 'none';
-            aboutDom.style.display = 'none';
+        // 改进后的切换逻辑
+        const tabs = document.querySelectorAll('#tab-s div');
+        const pages = {
+            avatar: document.querySelector('.avater-s'),
+            about: document.querySelector('.about-s'),
+            telegram: document.querySelector('.tg-s')
+        };
+
+        function switchTab(selectedTab) {
+            tabs.forEach(tab => {
+                const isActive = tab === selectedTab;
+                tab.classList.toggle('active', isActive);
+                tab.style.transform = isActive ? 'scale(1.05)' : 'none';
+            });
+
+            Object.values(pages).forEach(page => 
+                page.style.display = 'none'
+            );
+            pages[selectedTab.dataset.page].style.display = 'block';
         }
 
-        init()
-
-        document.querySelectorAll('#tab-s div').forEach(item => {
-            item.addEventListener('click', () => {
-                avatarDom.style.display = item.dataset.page === 'avatar' ? 'block' : 'none';
-                aboutDom.style.display = item.dataset.page === 'about' ? 'block' : 'none';
-                tgDom.style.display = item.dataset.page === 'telegram' ? 'block' : 'none';
-            });
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => switchTab(tab));
         });
+
+        // 默认显示第一个标签页
+        switchTab(tabs[0]);
     </script>
 </body>
 </html>
